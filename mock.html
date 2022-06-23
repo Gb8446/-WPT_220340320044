@@ -1,0 +1,175 @@
+<html>
+	<head>
+		<script src="jquery-3.5.1.min.js"></script>
+<script>//our scrip will come here 
+
+$( ()=>{
+
+	function showdetails(){
+		let ajaxpara={
+		  data:{},
+		  url : "http://localhost:8081/getalldetail",
+		  type:'get',
+		  datatype:'json',
+		  success:(output)=>{
+			  let detail=output;
+			  let content=" ";
+			  for(let i=0;i<detail.length;i++){
+				  content += "<br/>"+ detail[i].bookid +"  "+ detail[i].bookname +"  "+ detail[i].price;
+
+			  }
+			  $("#s2").html(content);
+		  },
+		  error:(error)=>{
+			  console.log(error);
+		  }
+	  };
+	  $.ajax(ajaxpara);
+	}
+
+
+$("#bookid").blur(() =>
+{
+	  let input=$("#bookid").val();
+
+	  let ajaxpara={
+
+		  data:{x:input},
+		  url : "http://localhost:8081/getbookdetail",
+		  type:'get',
+		  datatype:'json',
+		  success:(output)=>{
+			  if(output.status){
+
+				  $("#s1").text("bookid is found");
+				  $("#bookname").val(output.bookdetails.bookname);
+				  $("#bookprice").val(output.bookdetails.price);
+				  $("#add").prop('disabled',true);
+				  $("#s1").removeClass("failed").addClass("success");
+
+			  }
+			  else{
+				$("#s1").text("bookid is not found");
+				  $("#bookname").val(" ");
+				  $("#bookprice").val(" ");
+				  $("#add").prop('disabled',false);
+				  $("#s1").removeClass("success").addClass("failed");
+
+			  }
+
+			  showdetails();
+
+		  },
+		  error:(error)=>{
+			  console.log(error);
+		  }
+	  };
+	  $.ajax(ajaxpara);
+	
+});
+$("#add").click(() =>
+{
+	  let input={ x:$("#bookid").val(),y:$("#bookname").val(),z:$("#bookprice").val()}
+	  let ajaxpara={
+		  data:input,
+		  url : "http://localhost:8081/adddetails",
+		  type:'get',
+		  datatype:'json',
+		  success:(output)=>{
+			  if(output){
+				  $("#s1").text("Add successfully");
+				  $("#s1").removeClass("failed").addClass("success");
+
+				
+			  }
+			  else{
+				$("#s1").text("Add failed");
+				$("#s1").removeClass("success").addClass("failed");
+				 
+
+			  }
+			
+			  $("#bookname").val(" ");
+			 $("#bookprice").val(" ");
+
+			  showdetails();
+
+		  },
+		  error:(error)=>{
+			  console.log(error);
+		  }
+	  };
+	  $.ajax(ajaxpara);
+	
+});
+$("#update").click(() =>
+{
+	  let input={ x:$("#bookid").val(),y:$("#bookname").val(),z:$("#bookprice").val()}
+	  let ajaxpara={
+		  data:input,
+		  url : "http://localhost:8081/updatedetails",
+		  type:'get',
+		  datatype:'json',
+		  success:(output)=>{
+			  if(output){
+				  $("#s1").text("update successfully");
+				  $("#s1").removeClass("failed").addClass("success");
+
+			  }
+			  else{
+				$("#s1").text("update failed");
+				$("#s1").removeClass("success").addClass("failed");
+				 
+			  }
+			      $("#bookname").val(" ");
+				  $("#bookprice").val(" ");
+
+
+				  showdetails();
+
+		  },
+		  error:(error)=>{
+			  console.log(error);
+		  }
+	  };
+	  $.ajax(ajaxpara);
+	
+});
+
+showdetails();
+
+});
+
+
+
+</script>
+<style>
+	.success{color: green;}
+	.failed{color: red;}
+</style>
+	</head>
+<body>
+
+
+<input type="text" id="bookid" placeholder="Bookid"/>
+<span id="s1">what happened</span>
+<br>
+
+<input type="text" id="bookname" placeholder="Book Name"/>
+<br>
+
+<input type="text" id="bookprice" placeholder="Book Price"/>
+<br><br>
+
+<button id="add"> Add </button>
+<button id="update"> Update </button>
+<hr>
+<p id="s2"> All book details</p>
+
+
+</body>
+
+
+
+
+</html>
